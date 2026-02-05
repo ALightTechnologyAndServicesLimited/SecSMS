@@ -23,7 +23,7 @@ I won't join the cyber mafia nor give any ransom extortion!
 
 [Youtube](https://www.youtube.com/@kantikalyanarumilli)
 
-+91-789-362-6688, +1-480-347-6849, +44-3333-03-1284, +44-07718-273-964
++91-789-362-6688, +1-480-347-6849, +44-07718-273-964
 
 ### Startup Links:
 [Facebook](https://www.facebook.com/ALightTechnologyAndServicesLimited/)
