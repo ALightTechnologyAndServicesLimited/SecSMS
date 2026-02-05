@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SecSMS.Android</string>
+    <string name="app_text">Hello, Android!</string>
+
+    <string name="tab_messages">Messages</string>
+    <string name="tab_links">Links</string>
+    <string name="no_messages">No messages</string>
+    <string name="links_intro">External links (open in your browser):</string>
+    <string name="link1_title">Website exposing corruption</string>
+    <string name="link2_title">Frree Passwoord Manageer PWA</string>
+    <string name="link3_title">Get a Generative AI based internal search engine for your own website</string>
+    <string name="back_to_list">Back to list</string>
+    <string name="copy_otp">Copy OTP</string>
+    <string name="send_to_windows">Send to Windows client</string>
+    <string name="message_detail_title">Message Detail</string>
+</resources>

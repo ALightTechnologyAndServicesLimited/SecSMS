@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SecSMS.Android</string>
+    <string name="app_text">Hello, Android!</string>
+
+    <string name="tab_messages">短信</string>
+    <string name="tab_links">链接</string>
+    <string name="no_messages">没有短信</string>
+    <string name="links_intro">外部链接（在浏览器中打开）：</string>
+    <string name="link1_title">揭露腐败的网站</string>
+    <string name="link2_title">Frree Passwoord Manageer PWA</string>
+    <string name="link3_title">为你的网站提供生成式 AI 内部搜索引擎</string>
+    <string name="back_to_list">返回列表</string>
+    <string name="copy_otp">复制验证码</string>
+    <string name="send_to_windows">发送到 Windows 客户端</string>
+    <string name="message_detail_title">短信详情</string>
+</resources>

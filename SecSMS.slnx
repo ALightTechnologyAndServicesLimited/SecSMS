@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="SecSMS.Android/SecSMS.Android.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="SecSMS.Common/SecSMS.Common.csproj" />
+  <Project Path="SecSMS.Desktop/SecSMS.Desktop.csproj" Id="67b3f343-d3d9-41ff-9af9-ffe387808928" />
+</Solution>

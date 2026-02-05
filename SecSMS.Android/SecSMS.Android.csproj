@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationId>com.companyname.SecSMS.Android</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <!--
+      Enables trim analyzers and full trimming during Release mode.
+      To learn more, see: https://learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options#trimming-granularity
+    -->
+    <TrimMode>full</TrimMode>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <AndroidSigningKeyStore></AndroidSigningKeyStore>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <EnableLLVM>True</EnableLLVM>
+    <AndroidKeyStore>False</AndroidKeyStore>
+    <AndroidSigningStorePass></AndroidSigningStorePass>
+    <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass></AndroidSigningKeyPass>
+    <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+    <AndroidUseAapt2>True</AndroidUseAapt2>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <EnableLLVM>True</EnableLLVM>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidKeyStore>False</AndroidKeyStore>
+    <AndroidSigningStorePass></AndroidSigningStorePass>
+    <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass></AndroidSigningKeyPass>
+    <PublishTrimmed>True</PublishTrimmed>
+    <AndroidEnableProfiledAot>True</AndroidEnableProfiledAot>
+    <RunAOTCompilation>True</RunAOTCompilation>
+    <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+    <AndroidLinkTool>r8</AndroidLinkTool>
+    <AndroidUseAapt2>True</AndroidUseAapt2>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SecSMS.Common\SecSMS.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.AndroidX.SwipeRefreshLayout" Version="1.1.0.25" />
+  </ItemGroup>
+</Project>

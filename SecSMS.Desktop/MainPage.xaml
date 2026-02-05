@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SecSMS.Desktop.MainPage"
+             Title="SecSMS">
+    <VerticalStackLayout
+        Padding="20"
+        Spacing="16">
+        <!--<HorizontalStackLayout x:Name="TabHeaderLayout" Spacing="8">
+            <Button x:Name="SmsTabButton" Text="SMS" Clicked="OnSmsTabClicked" />
+            <Button x:Name="LinksTabButton" Text="Links" Clicked="OnLinksTabClicked" />
+        </HorizontalStackLayout>-->
+        <HorizontalStackLayout Spacing="8">
+            <Label x:Name="Website1Label" Text="Website exposing corruption" TextColor="Blue">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnWebsite1Tapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="Website2Label" Text="Free Passwoord Manageer PWA" TextColor="Blue">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnWebsite2Tapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="Website3Label" Text="Get a Generative AI based internal search engine for your own website" TextColor="Blue">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnWebsite3Tapped" />
+                </Label.GestureRecognizers>
+            </Label>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout
+        Padding="20"
+        Spacing="16">
+            <Label
+            Text="Clipboard clear timeout (seconds)" />
+            <Entry
+            x:Name="TimeoutEntry"
+            Keyboard="Numeric"
+            Placeholder="30" />
+            <Label
+            Text="Show countdown" />
+            <Switch
+            x:Name="ShowCountdownSwitch" />
+            <!--<Button
+            Text="Save"
+            Clicked="OnSaveClicked" />-->
+            <Label
+            x:Name="SettingsStatusLabel"
+            Text=""
+            TextColor="Gray" />
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout x:Name="SmsTabContent" Spacing="16">
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="Bluetooth status:" />
+                <Label x:Name="BluetoothStatusLabel" Text="Not started" TextColor="Gray" />
+                <Editor
+                    x:Name="BluetoothLogEditor"
+                    IsReadOnly="True"
+                    AutoSize="Disabled"
+                    HeightRequest="120" />
+                <Button Text="Start Bluetooth" Clicked="OnStartBluetoothClicked" />
+                <Button Text="Send RSA Public Key" Clicked="OnSendRsaPublicKeyClicked" />
+            </HorizontalStackLayout>
+            <Label
+                Text="Current SMS content"
+                FontAttributes="Bold" />
+            <Editor
+                x:Name="SmsEditor"
+                AutoSize="TextChanges"
+                HeightRequest="120"
+                IsVisible="False"
+                Placeholder="Type or paste SMS content here for testing" />
+            <Button
+                Text="Copy SMS"
+                Clicked="OnCopyClicked" />
+            <HorizontalStackLayout
+                x:Name="CountdownContainer"
+                IsVisible="True"
+                Spacing="4">
+                <Label Text="Clipboard clears in" />
+                <Label x:Name="CountdownLabel" Text="" />
+            </HorizontalStackLayout>
+            <Label
+                x:Name="StatusLabel"
+                Text=""
+                TextColor="Gray" />
+        </VerticalStackLayout>
+
+        <ScrollView x:Name="LinksTabContent" IsVisible="True">
+        </ScrollView>
+    </VerticalStackLayout>
+</ContentPage>

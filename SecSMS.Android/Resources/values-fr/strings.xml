@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SecSMS.Android</string>
+    <string name="app_text">Hello, Android!</string>
+
+    <string name="tab_messages">Messages</string>
+    <string name="tab_links">Liens</string>
+    <string name="no_messages">Aucun message</string>
+    <string name="links_intro">Liens externes (ouverts dans votre navigateur) :</string>
+    <string name="link1_title">Site dénonçant la corruption</string>
+    <string name="link2_title">Frree Passwoord Manageer PWA</string>
+    <string name="link3_title">Moteur de recherche interne IA générative pour votre site web</string>
+    <string name="back_to_list">Retour à la liste</string>
+    <string name="copy_otp">Copier le code</string>
+    <string name="send_to_windows">Envoyer au client Windows</string>
+    <string name="message_detail_title">Détail du message</string>
+</resources>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	<LinearLayout
+		android:id="@+id/tabHeaderLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:padding="8dp">
+		<Button
+			android:id="@+id/smsTabButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/tab_messages" />
+		<Button
+			android:id="@+id/linksTabButton"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/tab_links" />
+	</LinearLayout>
+
+	<FrameLayout
+		android:id="@+id/tabContentFrame"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+
+		<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+			android:id="@+id/smsSwipeRefreshLayout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<RelativeLayout
+				android:id="@+id/smsContentContainer"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<ListView
+					android:id="@+id/smsListView"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent" />
+				<TextView
+					android:id="@+id/emptyTextView"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:text="@string/no_messages" />
+				<ProgressBar
+					android:id="@+id/loadingProgressBar"
+					style="?android:attr/progressBarStyleLarge"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true" />
+			</RelativeLayout>
+
+		</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+		<ScrollView
+			android:id="@+id/linksContentContainer"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:visibility="gone">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:padding="16dp">
+				<TextView
+					android:id="@+id/linksIntroTextView"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/links_intro"
+					android:textSize="12sp"
+					android:textColor="@android:color/darker_gray" />
+				<TextView
+					android:id="@+id/website1TextView"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="8dp"
+					android:text="@string/link1_title"
+					android:textColor="@android:color/holo_blue_dark"
+					android:clickable="true"
+					android:focusable="true" />
+				<TextView
+					android:id="@+id/website2TextView"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="4dp"
+					android:text="@string/link2_title"
+					android:textColor="@android:color/holo_blue_dark"
+					android:clickable="true"
+					android:focusable="true" />
+				<TextView
+					android:id="@+id/website3TextView"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="4dp"
+					android:text="@string/link3_title"
+					android:textColor="@android:color/holo_blue_dark"
+					android:clickable="true"
+					android:focusable="true" />
+			</LinearLayout>
+		</ScrollView>
+	</FrameLayout>
+</LinearLayout>
