@@ -100,7 +100,7 @@ However, no method of transmission or storage is completely secure. You use the 
 
 ## 7. Children's Privacy
 
-The App is not directed to children under the age of 13, and we do not knowingly collect personal information from children under 13. If you believe a child has provided us with personal information through the App, please contact us so that we can take appropriate action.
+The App is not directed to children under the age of 13, and we do not knowingly collect personal information from any person. If you believe a child has provided us with personal information through or because of the App, please contact us so that we can take appropriate action.
 
 ---
 
