@@ -61,5 +61,12 @@
                 android:layout_weight="1"
                 android:text="@string/send_to_windows" />
         </LinearLayout>
+        <Button
+            android:id="@+id/openInBrowserButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/open_in_browser"
+            android:visibility="gone" />
     </LinearLayout>
 </ScrollView>

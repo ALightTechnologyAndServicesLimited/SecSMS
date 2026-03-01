@@ -13,5 +13,6 @@
     <string name="back_to_list">Назад к списку</string>
     <string name="copy_otp">Копировать код</string>
     <string name="send_to_windows">Отправить на Windows-клиент</string>
+    <string name="open_in_browser">Открыть в браузере</string>
     <string name="message_detail_title">Детали сообщения</string>
 </resources>

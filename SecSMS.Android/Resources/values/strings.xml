@@ -12,5 +12,6 @@
     <string name="back_to_list">Back to list</string>
     <string name="copy_otp">Copy OTP</string>
     <string name="send_to_windows">Send to Windows client</string>
+    <string name="open_in_browser">Open in Browser</string>
     <string name="message_detail_title">Message Detail</string>
 </resources>

@@ -29,9 +29,12 @@ public sealed class MessageDetailActivity : Activity
     Button? _backButton;
     Button? _copyButton;
     Button? _sendButton;
+    Button? _openInBrowserButton;
     AndroidBluetoothTransportClient? _bluetoothClient;
     string? _pendingOtp;
     string? _selectedOtp;
+    string? _selectedUrl;
+    string? _rawBody;
     CryptHelper? _cryptoHelper;
 
     static readonly string[] BluetoothPermissions =
@@ -59,10 +62,16 @@ public sealed class MessageDetailActivity : Activity
         _backButton = FindViewById<Button>(Resource.Id.backButton);
         _copyButton = FindViewById<Button>(Resource.Id.copyOtpButton);
         _sendButton = FindViewById<Button>(Resource.Id.sendToWindowsButton);
+        _openInBrowserButton = FindViewById<Button>(Resource.Id.openInBrowserButton);
 
         if (_backButton != null)
         {
             _backButton.Click += (_, _) => Finish();
+        }
+
+        if (_openInBrowserButton != null)
+        {
+            _openInBrowserButton.Click += (_, _) => OpenSelectedUrl();
         }
 
         var messageId = Intent?.GetStringExtra(ExtraMessageId);
@@ -93,10 +102,28 @@ public sealed class MessageDetailActivity : Activity
                 return;
             }
 
-            var maskedBody = SmsMasking.MaskDigits(detail.Body);
+            var maskedBody = SmsMasking.MaskSensitiveText(detail.Body);
             var otp = SmsMasking.ExtractOtp(detail.Body);
             var otpCandidates = SmsMasking.ExtractAllOtps(detail.Body).Distinct().ToList();
-            _selectedOtp = otp;
+            _selectedUrl = SmsMasking.ExtractAllUrls(detail.Body).FirstOrDefault();
+            _rawBody = detail.Body;
+
+            if (!string.IsNullOrEmpty(otp))
+            {
+                var idx = otpCandidates.IndexOf(otp);
+                if (idx > 0)
+                {
+                    otpCandidates.RemoveAt(idx);
+                    otpCandidates.Insert(0, otp);
+                }
+                else if (idx < 0 && otpCandidates.Count > 0)
+                {
+                    // Ensure the list contains our preferred OTP as the first entry if it's missing.
+                    otpCandidates.Insert(0, otp);
+                }
+            }
+
+            _selectedOtp = otp ?? (otpCandidates.Count > 0 ? otpCandidates[0] : null);
 
             if (_fromView != null)
             {
@@ -116,6 +143,13 @@ public sealed class MessageDetailActivity : Activity
             if (_bodyView != null)
             {
                 _bodyView.Text = maskedBody;
+            }
+
+            if (_openInBrowserButton != null)
+            {
+                _openInBrowserButton.Visibility = string.IsNullOrWhiteSpace(_selectedUrl)
+                    ? global::Android.Views.ViewStates.Gone
+                    : global::Android.Views.ViewStates.Visible;
             }
 
             if (_otpSpinner != null)
@@ -160,12 +194,20 @@ public sealed class MessageDetailActivity : Activity
 
             if (_copyButton != null)
             {
-                _copyButton.Click += (_, _) => CopyOtpToClipboard(_selectedOtp ?? otp ?? maskedBody);
+                _copyButton.Click += (_, _) =>
+                {
+                    var textToCopy = _selectedOtp ?? otp ?? _selectedUrl ?? _rawBody ?? string.Empty;
+                    CopyOtpToClipboard(textToCopy);
+                };
             }
 
             if (_sendButton != null)
             {
-                _sendButton.Click += (_, _) => SendOTP(_selectedOtp ?? otp ?? maskedBody);
+                _sendButton.Click += (_, _) =>
+                {
+                    var textToSend = _selectedOtp ?? otp ?? _selectedUrl ?? string.Empty;
+                    SendOTP(textToSend);
+                };
             }
         }
         catch (Exception ex)
@@ -179,7 +221,7 @@ public sealed class MessageDetailActivity : Activity
     {
         if (string.IsNullOrWhiteSpace(otp))
         {
-            Toast.MakeText(this, "No OTP to send.", ToastLength.Short).Show();
+            Toast.MakeText(this, "Nothing to send.", ToastLength.Short).Show();
             return;
         }
 
@@ -350,7 +392,7 @@ public sealed class MessageDetailActivity : Activity
     {
         if (string.IsNullOrEmpty(text))
         {
-            Toast.MakeText(this, "No OTP to copy.", ToastLength.Short).Show();
+            Toast.MakeText(this, "Nothing to copy.", ToastLength.Short).Show();
             return;
         }
         // most of the invisible spying equipment people are shameless
@@ -371,6 +413,26 @@ public sealed class MessageDetailActivity : Activity
 
         //Clipboard.SetTextAsync(text);
 
-        Toast.MakeText(this, "OTP copied to clipboard.", ToastLength.Short).Show();
+        Toast.MakeText(this, "Copied to clipboard.", ToastLength.Short).Show();
+    }
+
+    void OpenSelectedUrl()
+    {
+        if (string.IsNullOrWhiteSpace(_selectedUrl))
+        {
+            Toast.MakeText(this, "No URL found.", ToastLength.Short).Show();
+            return;
+        }
+
+        try
+        {
+            var uri = global::Android.Net.Uri.Parse(_selectedUrl);
+            var intent = new Intent(Intent.ActionView, uri);
+            StartActivity(intent);
+        }
+        catch
+        {
+            Toast.MakeText(this, "Unable to open link.", ToastLength.Short).Show();
+        }
     }
 }

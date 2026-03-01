@@ -13,5 +13,6 @@
     <string name="back_to_list">Retour à la liste</string>
     <string name="copy_otp">Copier le code</string>
     <string name="send_to_windows">Envoyer au client Windows</string>
+    <string name="open_in_browser">Ouvrir dans le navigateur</string>
     <string name="message_detail_title">Détail du message</string>
 </resources>

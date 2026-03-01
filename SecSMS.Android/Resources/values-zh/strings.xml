@@ -13,5 +13,6 @@
     <string name="back_to_list">返回列表</string>
     <string name="copy_otp">复制验证码</string>
     <string name="send_to_windows">发送到 Windows 客户端</string>
+    <string name="open_in_browser">在浏览器中打开</string>
     <string name="message_detail_title">短信详情</string>
 </resources>
