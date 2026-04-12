@@ -9,6 +9,7 @@ There are cyber criminals using invisible drones capable of invisible cameras, i
 
 March 1 2026: Added URL masking functionality to hide sensitive URLs in SMS messages. Allows opening URLs in browser without exposing the full URL. Some identity verification services require opening URLs in browser and have codes for a particular session.
 
+April 12 2026: PQ algorithms.
 
 
 The next problem caused by them session hijacking! Something needs to be done!
