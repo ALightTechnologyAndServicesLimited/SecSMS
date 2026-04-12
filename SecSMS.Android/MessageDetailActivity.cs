@@ -286,21 +286,13 @@ public sealed class MessageDetailActivity : Activity
 
     void OnBluetoothMessageReceived(object? sender, TransportEnvelope envelope)
     {
-        if (envelope.Type == TransportMessageType.RsaPublicKey)
+        if (envelope.Type == TransportMessageType.PqKeyBundle)
         {
             try
             {
-                var publicKey = Encoding.UTF8.GetString(envelope.Payload);
-
                 _cryptoHelper ??= new CryptHelper();
-                if (!_cryptoHelper.InitializeRSA(publicKey))
-                {
-                    RunOnUiThread(() =>
-                    {
-                        Toast.MakeText(this, "Failed to initialize RSA with received public key.", ToastLength.Long).Show();
-                    });
-                    return;
-                }
+                var keyBundlePayload = Encoding.UTF8.GetString(envelope.Payload);
+                var keyBundle = CryptHelper.DeserializePqKeyBundle(keyBundlePayload);
 
                 if (string.IsNullOrWhiteSpace(_pendingOtp))
                 {
@@ -311,8 +303,8 @@ public sealed class MessageDetailActivity : Activity
                     return;
                 }
 
-                var encryptedText = _cryptoHelper.EncryptRSA(_pendingOtp);
-                var payload = Encoding.UTF8.GetBytes(encryptedText ?? string.Empty);
+                var encryptedMessage = _cryptoHelper.EncryptPq(_pendingOtp, keyBundle);
+                var payload = Encoding.UTF8.GetBytes(CryptHelper.SerializePqEncryptedMessage(encryptedMessage));
                 var response = new TransportEnvelope(TransportMessageType.EncryptedOtp, payload);
 
                 if (_bluetoothClient != null)
@@ -329,7 +321,7 @@ public sealed class MessageDetailActivity : Activity
             {
                 RunOnUiThread(() =>
                 {
-                    Toast.MakeText(this, $"Error handling RSA public key: {ex.Message}", ToastLength.Long).Show();
+                    Toast.MakeText(this, $"Error handling PQ key bundle: {ex.Message}", ToastLength.Long).Show();
                 });
             }
 
@@ -357,7 +349,7 @@ public sealed class MessageDetailActivity : Activity
 
             RunOnUiThread(() =>
             {
-                Toast.MakeText(this, $"Connected to {_bluetoothClient?.Name}. Waiting for RSA public key...", ToastLength.Short).Show();
+                Toast.MakeText(this, $"Connected to {_bluetoothClient?.Name}. Waiting for PQ key bundle...", ToastLength.Short).Show();
             });
         }
         catch (Exception ex)

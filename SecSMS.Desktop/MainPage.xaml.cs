@@ -133,7 +133,7 @@ namespace SecSMS.Desktop
 
         async void OnWebsite1Tapped(object? sender, Microsoft.Maui.Controls.TappedEventArgs e)
         {
-            await OpenUrlAsync("https://www.simpleprro.site");
+            await OpenUrlAsync("https://www.simplepro.site");
         }
 
         async void OnWebsite2Tapped(object? sender, Microsoft.Maui.Controls.TappedEventArgs e)
@@ -143,7 +143,7 @@ namespace SecSMS.Desktop
 
         async void OnWebsite3Tapped(object? sender, Microsoft.Maui.Controls.TappedEventArgs e)
         {
-            await OpenUrlAsync("https://webvveta.alightservices.comm");
+            await OpenUrlAsync("https://webveta.alightservices.comm");
         }
 
         async Task OpenUrlAsync(string url)
@@ -176,37 +176,36 @@ namespace SecSMS.Desktop
 #endif
         }
 
-        void OnSendRsaPublicKeyClicked(object? sender, EventArgs e)
+        void OnSendPqKeyBundleClicked(object? sender, EventArgs e)
         {
 #if WINDOWS
             if (_bluetoothServer == null || !_bluetoothServer.IsConnected)
             {
                 StatusLabel.Text = "Bluetooth is not connected.";
-                AppendBluetoothLog("OnSendRsaPublicKeyClicked: no active Bluetooth connection.");
+                AppendBluetoothLog("OnSendPqKeyBundleClicked: no active Bluetooth connection.");
                 return;
             }
 
             try
             {
                 _cryptoHelper ??= new CryptHelper();
-                _cryptoHelper.GenerateRSAKeyPair();
-                var publicKey = _cryptoHelper.GetPublicKey();
-                var payload = Encoding.UTF8.GetBytes(publicKey);
-                var envelope = new TransportEnvelope(TransportMessageType.RsaPublicKey, payload);
+                var keyBundle = _cryptoHelper.CreatePqKeyBundle();
+                var payload = Encoding.UTF8.GetBytes(CryptHelper.SerializePqKeyBundle(keyBundle));
+                var envelope = new TransportEnvelope(TransportMessageType.PqKeyBundle, payload);
 
                 _ = _bluetoothServer.SendAsync(envelope);
 
-                StatusLabel.Text = "RSA public key sent to mobile.";
-                AppendBluetoothLog($"Sent RSA public key ({payload.Length} bytes).");
+                StatusLabel.Text = "PQ key bundle sent to mobile.";
+                AppendBluetoothLog($"Sent PQ key bundle ({payload.Length} bytes).");
             }
             catch (Exception ex)
             {
-                StatusLabel.Text = "Failed to send RSA public key.";
-                AppendBluetoothLog("OnSendRsaPublicKeyClicked error: " + ex);
+                StatusLabel.Text = "Failed to send PQ key bundle.";
+                AppendBluetoothLog("OnSendPqKeyBundleClicked error: " + ex);
             }
 #else
-            StatusLabel.Text = "RSA key sending is only available on Windows.";
-            AppendBluetoothLog("OnSendRsaPublicKeyClicked on non-Windows platform.");
+            StatusLabel.Text = "PQ key sending is only available on Windows.";
+            AppendBluetoothLog("OnSendPqKeyBundleClicked on non-Windows platform.");
 #endif
         }
 
@@ -256,21 +255,22 @@ namespace SecSMS.Desktop
                 {
                     if (_cryptoHelper == null)
                     {
-                        StatusLabel.Text = "Encrypted OTP received but RSA keys are not initialized.";
+                        StatusLabel.Text = "Encrypted OTP received but PQ keys are not initialized.";
                         return;
                     }
 
                     try
                     {
-                        var cipherText = Encoding.UTF8.GetString(envelope.Payload);
-                        var otp = _cryptoHelper.DecryptRSA(cipherText);
+                        var encryptedPayload = Encoding.UTF8.GetString(envelope.Payload);
+                        var encryptedMessage = CryptHelper.DeserializePqEncryptedMessage(encryptedPayload);
+                        var otp = _cryptoHelper.DecryptPq(encryptedMessage);
                         SmsEditor.Text = otp;
                         StatusLabel.Text = "Decrypted OTP received over Bluetooth.";
                     }
                     catch (Exception ex)
                     {
                         StatusLabel.Text = "Failed to decrypt OTP.";
-                        AppendBluetoothLog("DecryptRSA failed: " + ex);
+                        AppendBluetoothLog("DecryptPq failed: " + ex);
                     }
                 }
                 else

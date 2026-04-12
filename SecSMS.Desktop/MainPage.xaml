@@ -60,7 +60,7 @@
                     AutoSize="Disabled"
                     HeightRequest="120" />
                 <Button Text="Start Bluetooth" Clicked="OnStartBluetoothClicked" />
-                <Button Text="Send RSA Public Key" Clicked="OnSendRsaPublicKeyClicked" />
+                <Button Text="Send PQ Key Bundle" Clicked="OnSendPqKeyBundleClicked" />
             </HorizontalStackLayout>
             <Label
                 Text="Current SMS content"

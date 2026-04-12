@@ -16,7 +16,7 @@ public enum TransportMessageType
     Unknown = 0,
     Test = 1,
     SmsPayload = 2,
-    RsaPublicKey = 3,
+    PqKeyBundle = 3,
     EncryptedOtp = 4,
 }
 

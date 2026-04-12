@@ -70,7 +70,7 @@ namespace SecSMS.Android
 
 			if (_website1View != null)
 			{
-				_website1View.Click += (_, _) => OpenUrl("https://www.simpleprro.site");
+				_website1View.Click += (_, _) => OpenUrl("https://www.simplepro.site");
 			}
 
 			if (_website2View != null)
@@ -80,7 +80,7 @@ namespace SecSMS.Android
 
 			if (_website3View != null)
 			{
-				_website3View.Click += (_, _) => OpenUrl("https://webvveta.alightservices.comm");
+				_website3View.Click += (_, _) => OpenUrl("https://webveta.alightservices.comm");
 			}
 
 			if (_swipeRefresh != null)
