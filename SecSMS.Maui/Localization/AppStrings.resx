@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TabMessages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="TabLinks" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>No messages</value>
+  </data>
+  <data name="LinksIntro" xml:space="preserve">
+    <value>External links (open in your browser):</value>
+  </data>
+  <data name="Link1Title" xml:space="preserve">
+    <value>Website exposing corruption</value>
+  </data>
+  <data name="Link2Title" xml:space="preserve">
+    <value>Free Passwoord Manager PWA</value>
+  </data>
+  <data name="Link3Title" xml:space="preserve">
+    <value>Get a Generative AI based internal search engine for your own website</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+  <data name="CopyOtp" xml:space="preserve">
+    <value>Copy OTP</value>
+  </data>
+  <data name="SendToWindows" xml:space="preserve">
+    <value>Send to Windows client</value>
+  </data>
+  <data name="OpenInBrowser" xml:space="preserve">
+    <value>Open in Browser</value>
+  </data>
+  <data name="MessageDetailTitle" xml:space="preserve">
+    <value>Message Detail</value>
+  </data>
+  <data name="WaitingForPqBundle" xml:space="preserve">
+    <value>Connected. Waiting for PQ key bundle from Windows...</value>
+  </data>
+  <data name="NothingToCopy" xml:space="preserve">
+    <value>Nothing to copy.</value>
+  </data>
+  <data name="CopiedToClipboard" xml:space="preserve">
+    <value>Copied to clipboard.</value>
+  </data>
+  <data name="NothingToSend" xml:space="preserve">
+    <value>Nothing to send.</value>
+  </data>
+  <data name="EncryptedOtpSent" xml:space="preserve">
+    <value>Encrypted OTP sent to desktop.</value>
+  </data>
+  <data name="BluetoothCancelled" xml:space="preserve">
+    <value>Bluetooth device selection was canceled.</value>
+  </data>
+  <data name="NoUrlFound" xml:space="preserve">
+    <value>No URL found.</value>
+  </data>
+  <data name="UnableToOpenLink" xml:space="preserve">
+    <value>Unable to open link.</value>
+  </data>
+  <data name="PermissionRequired" xml:space="preserve">
+    <value>Permission required to read SMS.</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+</root>

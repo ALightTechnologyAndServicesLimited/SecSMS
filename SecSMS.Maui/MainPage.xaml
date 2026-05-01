@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SecSMS.Maui.MainPage"
+             Title="SecSMS">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Padding="8"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="8">
+            <Button Grid.Column="0"
+                    x:Name="MessagesTabButton"
+                    Text="Messages"
+                    Clicked="OnMessagesTabClicked" />
+            <Button Grid.Column="1"
+                    x:Name="LinksTabButton"
+                    Text="Links"
+                    Clicked="OnLinksTabClicked" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid x:Name="MessagesContent">
+                <RefreshView x:Name="MessagesRefreshView"
+                             Command="{x:Null}"
+                             Refreshing="OnRefreshRequested">
+                    <Grid Padding="12">
+                        <CollectionView x:Name="MessagesCollectionView"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnMessageSelectionChanged">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <VerticalStackLayout Padding="12,10"
+                                                         Spacing="4">
+                                        <Label Text="{Binding FromNumber}"
+                                               FontAttributes="Bold"
+                                               FontSize="16" />
+                                        <Label FontSize="13"
+                                               TextColor="Gray">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding SimSlot}" />
+                                                    <Span Text="  " />
+                                                    <Span Text="{Binding ReceivedAt.LocalDateTime, StringFormat='{0:t}'}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Label x:Name="EmptyLabel"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               IsVisible="False" />
+
+                        <ActivityIndicator x:Name="LoadingIndicator"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           IsRunning="False"
+                                           IsVisible="False" />
+                    </Grid>
+                </RefreshView>
+            </Grid>
+
+            <ScrollView x:Name="LinksContent"
+                        IsVisible="False">
+                <VerticalStackLayout Padding="16"
+                                     Spacing="8">
+                    <Label Text="External links (open in your browser):"
+                           FontSize="12"
+                           TextColor="Gray" />
+                    <Button Text="Website exposing corruption"
+                            Clicked="OnLinkClicked"
+                            CommandParameter="https://www.simplepro.site" />
+                    <Button Text="Free Passwoord Manager PWA"
+                            Clicked="OnLinkClicked"
+                            CommandParameter="https://simplepass.alightservices.com" />
+                    <Button Text="Get a Generative AI based internal search engine for your own website"
+                            Clicked="OnLinkClicked"
+                            CommandParameter="https://webveta.alightservices.com" />
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+    </Grid>
+
+</ContentPage>

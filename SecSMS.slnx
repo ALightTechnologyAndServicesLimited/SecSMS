@@ -4,4 +4,5 @@
   </Project>
   <Project Path="SecSMS.Common/SecSMS.Common.csproj" />
   <Project Path="SecSMS.Desktop/SecSMS.Desktop.csproj" Id="67b3f343-d3d9-41ff-9af9-ffe387808928" />
+  <Project Path="SecSMS.Maui/SecSMS.Maui.csproj" Id="39f6d309-284a-4eba-bf34-57036107766e" />
 </Solution>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SecSMS.Maui.MessageDetailPage"
+             Title="Message Detail">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Button x:Name="BackButton"
+                    Text="Back to list"
+                    Clicked="OnBackClicked" />
+
+            <Label x:Name="FromNumberLabel"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
+            <Label x:Name="SimSlotLabel"
+                   FontSize="14"
+                   TextColor="Gray" />
+
+            <Label x:Name="ReceivedAtLabel"
+                   FontSize="14"
+                   TextColor="Gray" />
+
+            <Label x:Name="BodyLabel"
+                   Margin="0,12,0,0"
+                   FontSize="16"
+                   LineBreakMode="WordWrap" />
+
+            <Picker x:Name="OtpPicker"
+                    Margin="0,8,0,0"
+                    IsVisible="False"
+                    SelectedIndexChanged="OnOtpSelectionChanged" />
+
+            <Grid Margin="0,16,0,0"
+                  ColumnDefinitions="*,*"
+                  ColumnSpacing="8">
+                <Button Grid.Column="0"
+                        x:Name="CopyOtpButton"
+                        Text="Copy OTP"
+                        Clicked="OnCopyClicked" />
+                <Button Grid.Column="1"
+                        x:Name="SendToWindowsButton"
+                        Text="Send to Windows client"
+                        Clicked="OnSendClicked" />
+            </Grid>
+
+            <Button x:Name="OpenInBrowserButton"
+                    Margin="0,8,0,0"
+                    Text="Open in Browser"
+                    IsVisible="False"
+                    Clicked="OnOpenInBrowserClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
