@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.alightservices.secsms" android:versionCode="1">
-	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:supportsRtl="true" android:label="SecSMS"></application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.alightservices.secsms3" android:versionCode="1">
+	<application android:allowBackup="false" android:icon="@mipmap/appicon" android:supportsRtl="true" android:label="SecSMS" android:extractNativeLibs="true"></application>
 	<uses-permission android:name="android.permission.READ_SMS" />
 	<uses-permission android:name="android.permission.BLUETOOTH" />
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />

@@ -2,6 +2,15 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
+
+		<!-- Android Release build configuration for Google Play -->
+		<AndroidEnableMarshalMethods>false</AndroidEnableMarshalMethods>
+		<AndroidGenerateJniMarshalMethods>false</AndroidGenerateJniMarshalMethods>
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+		<AndroidPackageFormat Condition="'$(Configuration)' == 'Release'">aab</AndroidPackageFormat>
+		<PublishTrimmed>false</PublishTrimmed>
+		<RunAOTCompilation>false</RunAOTCompilation>
+		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
 
@@ -18,7 +27,6 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
 		<!-- Enable XAML source generation for faster build times and improved performance.
 		     This generates C# code from XAML at compile time instead of runtime inflation.
 		     To disable, remove this line.
@@ -31,7 +39,7 @@
 		<ApplicationTitle>SecSMS.Maui</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.alightservices.secsms</ApplicationId>
+		<ApplicationId>com.alightservices.secsms3</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -46,7 +54,17 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
-
+	<PropertyGroup>
+		<AndroidLinkMode>None</AndroidLinkMode>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
+	  <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
+	  <AndroidPackageFormat>aab</AndroidPackageFormat>
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -68,6 +86,13 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Linker configuration to prevent code stripping in Release builds -->
+		<LinkDescription Include="Platforms\Android\linker.xml" />
+		<TrimmerRootAssembly Include="SecSMS.Maui" RootMode="All" />
+		<TrimmerRootAssembly Include="SecSMS.Common" RootMode="All" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<linker>
+  <!-- Preserve SecSMS.Maui types -->
+  <assembly fullname="SecSMS.Maui" preserve="all" />
+  
+  <!-- Preserve SecSMS.Common types -->
+  <assembly fullname="SecSMS.Common" preserve="all" />
+  
+  <!-- Preserve Android SMS and Bluetooth permissions -->
+  <assembly fullname="Mono.Android">
+    <type fullname="Android.Provider.Telephony*" preserve="all" />
+    <type fullname="Android.Bluetooth.*" preserve="all" />
+    <type fullname="Android.Content.ContentResolver" preserve="all" />
+    <type fullname="Android.Database.ICursor" preserve="all" />
+    <type fullname="Android.Widget.Toast" preserve="all" />
+    <type fullname="Android.App.AlertDialog*" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve Microsoft.Maui.Essentials permissions -->
+  <assembly fullname="Microsoft.Maui.Essentials">
+    <type fullname="Microsoft.Maui.ApplicationModel.Permissions*" preserve="all" />
+    <type fullname="Microsoft.Maui.ApplicationModel.Platform*" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve localization resources -->
+  <assembly fullname="System.Resources.ResourceManager" preserve="all" />
+</linker>
