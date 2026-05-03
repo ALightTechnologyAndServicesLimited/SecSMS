@@ -26,6 +26,11 @@
                     <TapGestureRecognizer Tapped="OnWebsite3Tapped" />
                 </Label.GestureRecognizers>
             </Label>
+            <Label x:Name="Website4Label" Text="ALightVPN" TextColor="Blue">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnWebsite4Tapped" />
+                </Label.GestureRecognizers>
+            </Label>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout

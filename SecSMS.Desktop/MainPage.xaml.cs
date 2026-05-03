@@ -146,6 +146,11 @@ namespace SecSMS.Desktop
             await OpenUrlAsync("https://webveta.alightservices.comm");
         }
 
+        async void OnWebsite4Tapped(object? sender, Microsoft.Maui.Controls.TappedEventArgs e)
+        {
+            await OpenUrlAsync("https://vpn.alightservices.com");
+        }
+
         async Task OpenUrlAsync(string url)
         {
             try

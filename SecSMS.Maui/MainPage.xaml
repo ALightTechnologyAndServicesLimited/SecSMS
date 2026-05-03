@@ -79,6 +79,9 @@
                     <Button Text="Get a Generative AI based internal search engine for your own website"
                             Clicked="OnLinkClicked"
                             CommandParameter="https://webveta.alightservices.com" />
+                    <Button Text="ALightVPN - Secure VPN Service"
+                            Clicked="OnLinkClicked"
+                            CommandParameter="https://vpn.alightservices.com" />
                 </VerticalStackLayout>
             </ScrollView>
         </Grid>
