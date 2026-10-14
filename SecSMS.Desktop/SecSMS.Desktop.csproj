@@ -65,4 +65,12 @@
 		<ProjectReference Include="..\SecSMS.Common\SecSMS.Common.csproj" />
 	</ItemGroup>
 
+	<!-- Single-file publish support: WinUI3 bootstrap (DDLM) and MRT resource
+	     indexes must stay beside the exe; the single-file bundle cannot serve them. -->
+	<Target Name="KeepWinUIBootstrapOutOfSingleFileBundle" BeforeTargets="_ComputeFilesToBundle" Condition="'$(PublishSingleFile)' == 'true'">
+		<ItemGroup>
+			<ResolvedFileToPublish Update="@(ResolvedFileToPublish)" ExcludeFromSingleFile="true" Condition="$([System.String]::Copy('%(RelativePath)').EndsWith('.pri')) Or $([System.String]::Copy('%(RelativePath)').Contains('Microsoft.WindowsAppRuntime'))" />
+		</ItemGroup>
+	</Target>
+
 </Project>
