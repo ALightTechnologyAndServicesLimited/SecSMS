@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             x:Class="SecSMS.Maui.QrScannerPage"
+             Title="Scan QR Code">
+    <Grid RowDefinitions="*,Auto">
+        <zxing:CameraBarcodeReaderView x:Name="BarcodeReader"
+                                       IsDetecting="True"
+                                       IsTorchOn="False"
+                                       BarcodesDetected="OnBarcodesDetected" />
+        <VerticalStackLayout Grid.Row="1" Padding="12" Spacing="8">
+            <Label x:Name="StatusLabel"
+                   Text="Point the camera at a TOTP QR code (otpauth://totp/...)."
+                   FontSize="13"
+                   TextColor="Gray" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <Button Grid.Column="0"
+                        x:Name="TorchButton"
+                        Text="Toggle torch"
+                        Clicked="OnTorchClicked" />
+                <Button Grid.Column="1"
+                        Text="Cancel"
+                        Clicked="OnCancelClicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

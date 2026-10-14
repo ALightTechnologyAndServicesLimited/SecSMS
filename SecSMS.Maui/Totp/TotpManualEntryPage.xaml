@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SecSMS.Maui.TotpManualEntryPage"
+             Title="Add TOTP Manually">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label Text="Enter the details from your 2FA setup page. The secret is stored securely and codes stay hidden."
+                   FontSize="12"
+                   TextColor="Gray" />
+            <Label Text="Issuer (e.g. GitHub)" FontSize="13" />
+            <Entry x:Name="IssuerEntry" Placeholder="Issuer" />
+            <Label Text="Account (e.g. user@example.com)" FontSize="13" />
+            <Entry x:Name="AccountEntry" Placeholder="Account" />
+            <Label Text="Secret (Base32)" FontSize="13" />
+            <Entry x:Name="SecretEntry" Placeholder="JBSW Y3DP EHPK 3PXP" IsPassword="True" />
+            <Label Text="Algorithm" FontSize="13" />
+            <Picker x:Name="AlgorithmPicker" />
+            <Label Text="Digits" FontSize="13" />
+            <Picker x:Name="DigitsPicker" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <Button Grid.Column="0" Text="Save" Clicked="OnSaveClicked" />
+                <Button Grid.Column="1" Text="Cancel" Clicked="OnCancelClicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

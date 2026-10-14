@@ -11,6 +11,10 @@ March 1 2026: Added URL masking functionality to hide sensitive URLs in SMS mess
 
 April 12 2026: PQ algorithms.
 
+October 14 2026: TOTP authenticator in the Maui app (RFC 6238, SHA1/SHA256/SHA512, 6-8 digits). Add accounts by scanning the enrollment QR code with the camera or by manual entry. Codes are never displayed — each account shows only •••••• with a countdown; use Copy or Send to Windows (PQ-encrypted Bluetooth, same channel as SMS OTPs). Accounts can be renamed or deleted. Secrets are stored in SecureStorage (Keystore/Keychain).
+
+October 14 2026: Biometric app lock in the Maui app. Lock with face/fingerprint (Strong/Class 3 only). The app locks when sent to background and shows a lock screen on return. Turn it on with the switch under Links → Security, or tap Lock in the toolbar (enables and locks in one tap). Requires Android 8.0+ and enrolled biometrics; needs CAMERA and USE_BIOMETRIC permissions.
+
 
 The next problem caused by them session hijacking! Something needs to be done!
 

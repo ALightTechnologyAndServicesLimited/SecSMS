@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.ApplicationModel;
 using SecSMS.Common;
 using SecSMS.Maui.Localization;
+using SecSMS.Maui.Services;
 
 namespace SecSMS.Maui;
 
@@ -11,15 +12,18 @@ public partial class MainPage : ContentPage
 {
     readonly ISmsRepository _smsRepository;
     readonly IServiceProvider _serviceProvider;
+    readonly IAppLockService _appLock;
     readonly ObservableCollection<SmsMessageSummary> _items = new();
 
     bool _loaded;
+    bool _updatingLockSwitch;
 
-    public MainPage(ISmsRepository smsRepository, IServiceProvider serviceProvider)
+    public MainPage(ISmsRepository smsRepository, IServiceProvider serviceProvider, IAppLockService appLock)
     {
         InitializeComponent();
         _smsRepository = smsRepository;
         _serviceProvider = serviceProvider;
+        _appLock = appLock;
         MessagesCollectionView.ItemsSource = _items;
         ShowMessagesTab();
     }
@@ -27,6 +31,7 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        RefreshLockUi();
 
         if (_loaded)
         {
@@ -131,6 +136,122 @@ public partial class MainPage : ContentPage
     void OnLinksTabClicked(object? sender, EventArgs e)
     {
         ShowLinksTab();
+    }
+
+    async void OnTotpTabClicked(object? sender, EventArgs e)
+    {
+        var page = _serviceProvider.GetService<TotpListPage>()
+            ?? ActivatorUtilities.CreateInstance<TotpListPage>(_serviceProvider);
+        await Navigation.PushAsync(page);
+    }
+
+    void RefreshLockUi()
+    {
+        _updatingLockSwitch = true;
+        try
+        {
+            BiometricLockSwitch.IsToggled = _appLock.IsLockEnabled;
+            BiometricStatusLabel.Text = _appLock.IsLockEnabled
+                ? "App locks on background. Unlock with a Strong biometric (fingerprint, or certified Class 3 face)."
+                : "App lock is off. Tap Lock above or turn on the switch to protect messages and codes.";
+            if (_appLock.IsLockEnabled)
+            {
+                _ = AppendBiometricDetailsAsync();
+            }
+        }
+        finally
+        {
+            _updatingLockSwitch = false;
+        }
+    }
+
+    async Task AppendBiometricDetailsAsync()
+    {
+        try
+        {
+            var details = await _appLock.GetAvailabilityDetailsAsync();
+            BiometricStatusLabel.Text += " " + details;
+        }
+        catch
+        {
+            // Status line is informational only; never crash the page for it.
+        }
+    }
+
+    async void OnLockClicked(object? sender, EventArgs e)
+    {
+        if (!_appLock.IsLockEnabled)
+        {
+            // One-tap path: enroll + lock immediately instead of dead-ending
+            // with "turn it on below first".
+            if (!await _appLock.IsBiometricAvailableAsync())
+            {
+                var details = await _appLock.GetAvailabilityDetailsAsync();
+                var open = await DisplayAlert("Lock", details + " Open system settings to enroll?", "Open settings", "Cancel");
+                if (open)
+                {
+                    _appLock.TryOpenBiometricSettings();
+                }
+                return;
+            }
+
+            if (!await _appLock.AuthenticateAsync("Enable app lock"))
+            {
+                return;
+            }
+
+            _appLock.SetLockEnabled(true);
+            RefreshLockUi();
+        }
+
+        _appLock.Lock();
+        if (Application.Current is App app)
+        {
+            await app.ShowLockAsync();
+        }
+    }
+
+    async void OnBiometricLockToggled(object? sender, ToggledEventArgs e)
+    {
+        if (_updatingLockSwitch)
+        {
+            return;
+        }
+
+        if (e.Value)
+        {
+            // Prove face/fingerprint works before enabling, or the user
+            // could lock themselves out on a device without enrollment.
+            if (!await _appLock.IsBiometricAvailableAsync())
+            {
+                await DisplayAlert("Lock", "Face/fingerprint is not set up on this device.", "OK");
+                RefreshLockUi();
+                return;
+            }
+
+            var ok = await _appLock.AuthenticateAsync("Enable app lock");
+            if (!ok)
+            {
+                RefreshLockUi();
+                return;
+            }
+
+            _appLock.SetLockEnabled(true);
+        }
+        else
+        {
+            // Require proof to disable, or anyone holding the phone turns lock off.
+            var ok = await _appLock.AuthenticateAsync("Disable app lock");
+            if (!ok)
+            {
+                RefreshLockUi();
+                return;
+            }
+
+            _appLock.SetLockEnabled(false);
+        }
+
+        RefreshLockUi();
     }
 
     async void OnRefreshRequested(object? sender, EventArgs e)

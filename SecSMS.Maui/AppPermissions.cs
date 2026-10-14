@@ -22,6 +22,18 @@ public static class AppPermissions
 #endif
     }
 
+    public static async Task<bool> EnsureCameraPermissionAsync()
+    {
+        var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+        if (status == PermissionStatus.Granted)
+        {
+            return true;
+        }
+
+        status = await Permissions.RequestAsync<Permissions.Camera>();
+        return status == PermissionStatus.Granted;
+    }
+
     public static async Task<bool> EnsureBluetoothPermissionsAsync()
     {
 #if ANDROID

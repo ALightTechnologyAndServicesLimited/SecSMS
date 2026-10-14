@@ -4,9 +4,15 @@
              x:Class="SecSMS.Maui.MainPage"
              Title="SecSMS">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="LockToolbarItem"
+                     Text="Lock"
+                     Clicked="OnLockClicked" />
+    </ContentPage.ToolbarItems>
+
     <Grid RowDefinitions="Auto,*">
         <Grid Padding="8"
-              ColumnDefinitions="*,*"
+              ColumnDefinitions="*,*,*"
               ColumnSpacing="8">
             <Button Grid.Column="0"
                     x:Name="MessagesTabButton"
@@ -16,6 +22,10 @@
                     x:Name="LinksTabButton"
                     Text="Links"
                     Clicked="OnLinksTabClicked" />
+            <Button Grid.Column="2"
+                    x:Name="TotpTabButton"
+                    Text="TOTP"
+                    Clicked="OnTotpTabClicked" />
         </Grid>
 
         <Grid Grid.Row="1">
@@ -80,8 +90,28 @@
                             Clicked="OnLinkClicked"
                             CommandParameter="https://webveta.alightservices.com" />
                     <Button Text="ALightVPN - Secure VPN Service"
-                            Clicked="OnLinkClicked"
-                            CommandParameter="https://vpn.alightservices.com" />
+                             Clicked="OnLinkClicked"
+                             CommandParameter="https://vpn.alightservices.com" />
+
+                    <BoxView HeightRequest="1"
+                             Color="LightGray"
+                             Margin="0,12,0,4" />
+                    <Label Text="Security"
+                           FontAttributes="Bold"
+                           FontSize="14" />
+                    <Grid ColumnDefinitions="*,Auto"
+                          VerticalOptions="Center">
+                        <Label Grid.Column="0"
+                               Text="Lock with face / fingerprint"
+                               FontSize="13"
+                               VerticalOptions="Center" />
+                        <Switch Grid.Column="1"
+                                x:Name="BiometricLockSwitch"
+                                Toggled="OnBiometricLockToggled" />
+                    </Grid>
+                    <Label x:Name="BiometricStatusLabel"
+                           FontSize="12"
+                           TextColor="Gray" />
                 </VerticalStackLayout>
             </ScrollView>
         </Grid>

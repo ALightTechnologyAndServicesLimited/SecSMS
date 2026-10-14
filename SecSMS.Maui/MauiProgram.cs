@@ -1,6 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Plugin.Maui.Biometric;
 using SecSMS.Common;
+using SecSMS.Common.Totp;
+using SecSMS.Maui.Services;
+using SecSMS.Maui.Totp;
+using ZXing.Net.Maui.Controls;
 
 namespace SecSMS.Maui
 {
@@ -11,6 +16,7 @@ namespace SecSMS.Maui
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseBarcodeReader()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -25,7 +31,15 @@ namespace SecSMS.Maui
             builder.Services.AddSingleton<IOtpTransferService, UnsupportedOtpTransferService>();
 #endif
 
+            builder.Services.AddSingleton<ITotpRepository, SecureStorageTotpRepository>();
+            builder.Services.AddSingleton<IBiometric>(BiometricAuthenticationService.Default);
+            builder.Services.AddSingleton<IAppLockService, AppLockService>();
+
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<LockPage>();
+            builder.Services.AddTransient<TotpListPage>();
+            builder.Services.AddTransient<QrScannerPage>();
+            builder.Services.AddTransient<TotpManualEntryPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

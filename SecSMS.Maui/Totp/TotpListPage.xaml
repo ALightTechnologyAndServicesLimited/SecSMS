@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SecSMS.Maui.TotpListPage"
+             Title="TOTP Authenticator">
+    <Grid RowDefinitions="Auto,*">
+        <VerticalStackLayout Padding="12" Spacing="8">
+            <Label Text="Codes are hidden. Use Copy or Send — never displayed."
+                   FontSize="12"
+                   TextColor="Gray" />
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Button Grid.Column="0"
+                        x:Name="ScanQrButton"
+                        Text="Scan QR"
+                        Clicked="OnScanQrClicked" />
+                <Button Grid.Column="1"
+                        x:Name="ManualEntryButton"
+                        Text="Manual"
+                        Clicked="OnManualEntryClicked" />
+                <Button Grid.Column="2"
+                        x:Name="RefreshButton"
+                        Text="Refresh"
+                        Clicked="OnRefreshClicked" />
+            </Grid>
+            <Label x:Name="EmptyLabel"
+                   Text="No TOTP accounts yet. Scan a QR code to add one."
+                   FontSize="13"
+                   TextColor="Gray"
+                   IsVisible="False" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1"
+                        x:Name="TotpCollectionView"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="12,6" Padding="12" BorderColor="LightGray">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="{Binding DisplayName}"
+                                   FontAttributes="Bold"
+                                   FontSize="16" />
+                            <Label Text="{Binding Meta}"
+                                   FontSize="12"
+                                   TextColor="Gray" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <!-- Masked placeholder only. Real code is never bound to UI. -->
+                                <Label Grid.Column="0"
+                                       Text="••••••"
+                                       FontSize="22"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding CountdownText}"
+                                       FontSize="13"
+                                       TextColor="Gray"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                            <ProgressBar Progress="{Binding Progress}"
+                                         HeightRequest="4" />
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                                <Button Grid.Row="0" Grid.Column="0"
+                                        Text="Copy"
+                                        CommandParameter="{Binding Id}"
+                                        Clicked="OnCopyClicked" />
+                                <Button Grid.Row="0" Grid.Column="1"
+                                        Text="Send"
+                                        CommandParameter="{Binding Id}"
+                                        Clicked="OnSendClicked" />
+                                <Button Grid.Row="1" Grid.Column="0"
+                                        Text="Rename"
+                                        CommandParameter="{Binding Id}"
+                                        Clicked="OnRenameClicked" />
+                                <Button Grid.Row="1" Grid.Column="1"
+                                        Text="Delete"
+                                        CommandParameter="{Binding Id}"
+                                        Clicked="OnDeleteClicked" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

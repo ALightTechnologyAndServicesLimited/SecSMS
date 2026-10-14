@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SecSMS.Maui.LockPage"
+             Title="Locked">
+    <VerticalStackLayout Padding="32"
+                         Spacing="16"
+                         VerticalOptions="Center">
+        <Label Text="🔒"
+               FontSize="64"
+               HorizontalOptions="Center" />
+        <Label Text="SecSMS is locked"
+               FontSize="22"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+        <Label x:Name="StatusLabel"
+               Text="Unlock with your face or fingerprint to view messages and codes."
+               FontSize="13"
+               TextColor="Gray"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center" />
+        <Button x:Name="UnlockButton"
+                Text="Unlock"
+                Clicked="OnUnlockClicked" />
+        <Button x:Name="OpenSettingsButton"
+                Text="Open system settings"
+                IsVisible="False"
+                Clicked="OnOpenSettingsClicked" />
+        <Button x:Name="DisableLockButton"
+                Text="Turn off lock &amp; continue"
+                IsVisible="False"
+                Clicked="OnDisableLockClicked" />
+    </VerticalStackLayout>
+</ContentPage>
