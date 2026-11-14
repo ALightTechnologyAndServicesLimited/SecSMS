@@ -18,6 +18,7 @@ public enum TransportMessageType
     SmsPayload = 2,
     PqKeyBundle = 3,
     EncryptedOtp = 4,
+    EncryptedTotpEnrollment = 5,
 }
 
 public sealed class TransportEnvelope

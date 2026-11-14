@@ -3,6 +3,8 @@
 This repository contains code for 2 applications.
 Android and Windows.
 
+Documentation: [SecSMS Protocol](PROTOCOL.md) — Bluetooth framing, ML-KEM-768 + X25519 + AES-256-GCM cryptography, OTP/TOTP message flows, payload formats, and security properties.
+
 
 ## Problem:
 There are cyber criminals using invisible drones capable of invisible cameras, invisible speakers and mind reading capabilities equipment. They are doing OTP thefts, identity/credentials thefts, hacking accounts, enacting like virtual family, virtual friends, and doing identity distortion. This small tool reduces their cyber mafia activities of OTP theft!
@@ -19,8 +21,17 @@ October 14 2026: TOTP authenticator in the Maui app (RFC 6238, SHA1/SHA256/SHA51
 
 October 14 2026: Biometric app lock in the Maui app. Lock with face/fingerprint (Strong/Class 3 only). The app locks when sent to background and shows a lock screen on return. Turn it on with the switch under Links → Security, or tap Lock in the toolbar (enables and locks in one tap). Requires Android 8.0+ and enrolled biometrics; needs CAMERA and USE_BIOMETRIC permissions.
 
+November 14 2026: TOTP enrollment without showing the secret on screen (clipboard import, Windows → Android). For websites that copy a masked TOTP instead of displaying the QR/secret: copy the otpauth://totp/... URI or even a bare Base32 secret, then push it to the phone over the PQ-encrypted Bluetooth channel. Usage: Start Bluetooth on Windows → on Android open TOTP and tap "From Desktop" and pick the Windows device (the phone sends only its public ML-KEM-768 + X25519 key bundle; private keys never leave the phone) → on Windows click "Send TOTP from clipboard" → confirm the masked prompt (shows only issuer/account, never the secret). Windows validates the clipboard, encrypts with the phone's public bundle, sends, and clears the clipboard. Android decrypts, and if issuer/account are missing (bare secret) prompts for them before saving. The secret is never displayed or logged on either side, so screen spies and BT sniffers cannot steal it. Notes: one handshake per import — to import another account, tap "From Desktop" again; bare secrets use SHA1/6 digits/30s defaults; device authentication relies on Bluetooth pairing, so pick the correct paired device; Windows clipboard history (Win+V) may retain the copied secret independently of the app clearing the clipboard.
+
+November 14 2026: TOTP list fixes. Rows now show the issuer and the account name on separate lines; entries with no issuer/account get a unique "Unnamed account (xxxxxx)" label so they can be told apart and renamed or deleted. Re-scanning the same QR or re-importing the same account now updates the existing entry instead of creating duplicates (dedupe by normalized secret). Manual entry requires at least an issuer or an account name.
+
+Full protocol documentation (Bluetooth framing, ML-KEM-768 + X25519 + AES-256-GCM construction, message flows, payload formats, security properties): [PROTOCOL.md](PROTOCOL.md)
+
 
 The next problem caused by them session hijacking! Something needs to be done!
+[openvpn27-ubuntu-script](https://github.com/ALightTechnologyAndServicesLimited/openvpn27-ubuntu-script)
+
+[ALightVPN](https://vpn.alightservices.com)
 
 I won't join the cyber mafia nor give any ransom extortion!
 

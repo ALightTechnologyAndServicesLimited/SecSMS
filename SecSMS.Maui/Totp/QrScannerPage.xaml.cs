@@ -67,6 +67,34 @@ public partial class QrScannerPage : ContentPage
             return;
         }
 
+        // Some QR codes carry neither a label nor an issuer. Ask for names so the
+        // account is recognizable in the list instead of saving an unnamed entry.
+        if (string.IsNullOrWhiteSpace(entry.Issuer) && string.IsNullOrWhiteSpace(entry.AccountName))
+        {
+            var issuer = await MainThread.InvokeOnMainThreadAsync(() => DisplayPromptAsync("Name account", "Issuer (e.g. GitHub)", "OK", "Cancel", "Issuer", -1, Keyboard.Text, string.Empty));
+            if (issuer == null)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => Navigation.PopAsync());
+                return;
+            }
+
+            var account = await MainThread.InvokeOnMainThreadAsync(() => DisplayPromptAsync("Name account", "Account (e.g. user@example.com)", "OK", "Cancel", "Account", -1, Keyboard.Text, string.Empty));
+            if (account == null)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => Navigation.PopAsync());
+                return;
+            }
+
+            entry.Issuer = issuer.Trim();
+            entry.AccountName = account.Trim();
+            if (string.IsNullOrWhiteSpace(entry.Issuer) && string.IsNullOrWhiteSpace(entry.AccountName))
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => DisplayAlert("TOTP", "Enter at least an issuer or an account name.", "OK"));
+                await MainThread.InvokeOnMainThreadAsync(() => Navigation.PopAsync());
+                return;
+            }
+        }
+
         try
         {
             await _totpRepository.AddAsync(entry);

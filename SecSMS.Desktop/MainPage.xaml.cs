@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using SecSMS.Common;
+using SecSMS.Common.Totp;
 using SecSMS.Common.Transport;
 
 namespace SecSMS.Desktop
@@ -15,6 +16,7 @@ namespace SecSMS.Desktop
 #if WINDOWS
         WindowsBluetoothTransportServer? _bluetoothServer;
         CryptHelper? _cryptoHelper;
+        PqKeyBundle? _androidKeyBundle;
 #endif
 
         public MainPage()
@@ -214,6 +216,113 @@ namespace SecSMS.Desktop
 #endif
         }
 
+        async void OnSendTotpFromClipboardClicked(object? sender, EventArgs e)
+        {
+#if WINDOWS
+            if (_bluetoothServer == null || !_bluetoothServer.IsConnected)
+            {
+                StatusLabel.Text = "Bluetooth is not connected. On Android, open TOTP and tap 'From Desktop' first.";
+                return;
+            }
+
+            if (_androidKeyBundle == null)
+            {
+                StatusLabel.Text = "No Android key bundle yet. On Android, open TOTP and tap 'From Desktop' first.";
+                return;
+            }
+
+            string? clip = null;
+            try
+            {
+                clip = (await Clipboard.GetTextAsync())?.Trim();
+            }
+            catch (Exception ex)
+            {
+                StatusLabel.Text = "Could not read the clipboard.";
+                AppendBluetoothLog("Clipboard read failed: " + ex);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(clip))
+            {
+                StatusLabel.Text = "Clipboard is empty. Copy the otpauth:// URI or the Base32 secret first.";
+                return;
+            }
+
+            // Validate without persisting anything. The raw value is never shown in
+            // the UI or logs; only issuer/account (or a masked placeholder) appear.
+            string maskedTarget;
+            if (clip.StartsWith("otpauth://", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!OtpauthParser.TryParse(clip, out var parsed, out var parseError) || parsed == null)
+                {
+                    StatusLabel.Text = "Clipboard is not a valid TOTP enrollment: " + parseError;
+                    return;
+                }
+
+                maskedTarget = string.IsNullOrWhiteSpace(parsed.DisplayName)
+                    ? "an unnamed TOTP account (you can name it on the phone)"
+                    : $"'{parsed.DisplayName}'";
+            }
+            else
+            {
+                try
+                {
+                    // Throws for anything that is not valid Base32. Result discarded.
+                    _ = TotpGenerator.Generate(clip, DateTimeOffset.UtcNow);
+                }
+                catch
+                {
+                    StatusLabel.Text = "Clipboard is neither an otpauth:// URI nor a valid Base32 TOTP secret.";
+                    return;
+                }
+
+                maskedTarget = "a bare TOTP secret (you'll name it on the phone)";
+            }
+
+            var confirm = await DisplayAlert(
+                "Send TOTP to Android",
+                $"Send {maskedTarget} to Android? The secret stays hidden and the clipboard is cleared after sending.",
+                "Send",
+                "Cancel");
+            if (!confirm)
+            {
+                return;
+            }
+
+            try
+            {
+                _cryptoHelper ??= new CryptHelper();
+                var encrypted = _cryptoHelper.EncryptPq(clip, _androidKeyBundle);
+                var payload = Encoding.UTF8.GetBytes(CryptHelper.SerializePqEncryptedMessage(encrypted));
+                await _bluetoothServer.SendAsync(new TransportEnvelope(TransportMessageType.EncryptedTotpEnrollment, payload));
+
+                try
+                {
+                    await Clipboard.SetTextAsync(string.Empty);
+                }
+                catch
+                {
+                    // Clipboard clear is best-effort; never fail the send over it.
+                }
+
+                // Android disconnects after one import; require a fresh handshake
+                // for the next send so we never "send" into a closed socket.
+                _androidKeyBundle = null;
+                StatusLabel.Text = "Encrypted TOTP enrollment sent. Confirm on Android. To send another, tap 'From Desktop' on Android again.";
+                AppendBluetoothLog($"Sent encrypted TOTP enrollment ({payload.Length} bytes).");
+            }
+            catch (Exception ex)
+            {
+                StatusLabel.Text = "Failed to send TOTP enrollment.";
+                AppendBluetoothLog("TOTP enrollment send failed: " + ex);
+            }
+#else
+            StatusLabel.Text = "TOTP clipboard import is only available on Windows.";
+            await Task.CompletedTask;
+#endif
+        }
+
 #if WINDOWS
         async void StartBluetoothServer()
         {
@@ -276,6 +385,21 @@ namespace SecSMS.Desktop
                     {
                         StatusLabel.Text = "Failed to decrypt OTP.";
                         AppendBluetoothLog("DecryptPq failed: " + ex);
+                    }
+                }
+                else if (envelope.Type == TransportMessageType.PqKeyBundle)
+                {
+                    try
+                    {
+                        // Android's public bundle: lets us encrypt a TOTP enrollment
+                        // that only the Android device can decrypt.
+                        _androidKeyBundle = CryptHelper.DeserializePqKeyBundle(Encoding.UTF8.GetString(envelope.Payload));
+                        StatusLabel.Text = "Android is ready to receive a TOTP enrollment from the clipboard.";
+                    }
+                    catch (Exception ex)
+                    {
+                        StatusLabel.Text = "Failed to read Android key bundle.";
+                        AppendBluetoothLog("DeserializePqKeyBundle failed: " + ex);
                     }
                 }
                 else

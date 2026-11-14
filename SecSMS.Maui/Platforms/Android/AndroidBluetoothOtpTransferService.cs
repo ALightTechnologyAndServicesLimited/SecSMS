@@ -26,34 +26,7 @@ public sealed class AndroidBluetoothOtpTransferService : IOtpTransferService
             throw new InvalidOperationException("Nothing to send.");
         }
 
-        var adapter = BluetoothAdapter.DefaultAdapter;
-        if (adapter == null)
-        {
-            throw new InvalidOperationException("Bluetooth is not available on this device.");
-        }
-
-        if (!adapter.IsEnabled)
-        {
-            throw new InvalidOperationException("Please enable Bluetooth and try again.");
-        }
-
-        if (!await AppPermissions.EnsureBluetoothPermissionsAsync())
-        {
-            throw new InvalidOperationException("Bluetooth permission is required.");
-        }
-
-        var bondedDevices = adapter.BondedDevices;
-        if (bondedDevices == null || bondedDevices.Count == 0)
-        {
-            throw new InvalidOperationException("No paired Bluetooth devices found.");
-        }
-
-        var devices = new List<BluetoothDevice>(bondedDevices);
-        var selectedDevice = await SelectDeviceAsync(devices);
-        if (selectedDevice == null)
-        {
-            throw new OperationCanceledException("Bluetooth device selection was canceled.");
-        }
+        var selectedDevice = await SelectPairedDeviceAsync();
 
         using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeoutCts.CancelAfter(TimeSpan.FromSeconds(30));
@@ -117,6 +90,109 @@ public sealed class AndroidBluetoothOtpTransferService : IOtpTransferService
             client.Error -= OnError;
             client.MessageReceived -= OnMessageReceived;
         }
+    }
+
+    public async Task<string> ReceiveTotpEnrollmentAsync(CancellationToken cancellationToken = default)
+    {
+        var selectedDevice = await SelectPairedDeviceAsync();
+
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCts.CancelAfter(TimeSpan.FromSeconds(60));
+
+        await using var client = new AndroidBluetoothTransportClient(selectedDevice, BluetoothServiceUuid);
+        var completion = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cryptoHelper = new CryptHelper();
+        // Only the public bundle leaves the device; private keys stay in this instance.
+        var ownBundle = cryptoHelper.CreatePqKeyBundle();
+
+        void OnError(object? sender, Exception ex)
+        {
+            completion.TrySetException(ex);
+        }
+
+        void OnMessageReceived(object? sender, TransportEnvelope envelope)
+        {
+            if (envelope.Type != TransportMessageType.EncryptedTotpEnrollment)
+            {
+                return;
+            }
+
+            try
+            {
+                var encrypted = CryptHelper.DeserializePqEncryptedMessage(Encoding.UTF8.GetString(envelope.Payload));
+                completion.TrySetResult(cryptoHelper.DecryptPq(encrypted));
+            }
+            catch (Exception ex)
+            {
+                completion.TrySetException(ex);
+            }
+        }
+
+        client.Error += OnError;
+        client.MessageReceived += OnMessageReceived;
+
+        try
+        {
+            using var registration = timeoutCts.Token.Register(() => completion.TrySetCanceled(timeoutCts.Token));
+            await client.ConnectAsync(timeoutCts.Token).ConfigureAwait(false);
+
+            var bundlePayload = Encoding.UTF8.GetBytes(CryptHelper.SerializePqKeyBundle(ownBundle));
+            await client.SendAsync(new TransportEnvelope(TransportMessageType.PqKeyBundle, bundlePayload), timeoutCts.Token).ConfigureAwait(false);
+
+            var activity = Platform.CurrentActivity;
+            if (activity != null)
+            {
+                activity.RunOnUiThread(() =>
+                {
+                    Toast.MakeText(activity, "Waiting for TOTP enrollment from Windows...", ToastLength.Short)?.Show();
+                });
+            }
+
+            return await completion.Task.ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            throw new TimeoutException("Timed out waiting for the desktop TOTP enrollment.");
+        }
+        finally
+        {
+            client.Error -= OnError;
+            client.MessageReceived -= OnMessageReceived;
+        }
+    }
+
+    static async Task<BluetoothDevice> SelectPairedDeviceAsync()
+    {
+        var adapter = BluetoothAdapter.DefaultAdapter;
+        if (adapter == null)
+        {
+            throw new InvalidOperationException("Bluetooth is not available on this device.");
+        }
+
+        if (!adapter.IsEnabled)
+        {
+            throw new InvalidOperationException("Please enable Bluetooth and try again.");
+        }
+
+        if (!await AppPermissions.EnsureBluetoothPermissionsAsync())
+        {
+            throw new InvalidOperationException("Bluetooth permission is required.");
+        }
+
+        var bondedDevices = adapter.BondedDevices;
+        if (bondedDevices == null || bondedDevices.Count == 0)
+        {
+            throw new InvalidOperationException("No paired Bluetooth devices found.");
+        }
+
+        var devices = new List<BluetoothDevice>(bondedDevices);
+        var selectedDevice = await SelectDeviceAsync(devices);
+        if (selectedDevice == null)
+        {
+            throw new OperationCanceledException("Bluetooth device selection was canceled.");
+        }
+
+        return selectedDevice;
     }
 
     static async Task SendResponseAsync(AndroidBluetoothTransportClient client, TransportEnvelope response, TaskCompletionSource completion, CancellationToken cancellationToken)

@@ -24,6 +24,12 @@ public partial class TotpManualEntryPage : ContentPage
         var account = AccountEntry.Text?.Trim() ?? string.Empty;
         var secret = SecretEntry.Text?.Trim() ?? string.Empty;
 
+        if (string.IsNullOrWhiteSpace(issuer) && string.IsNullOrWhiteSpace(account))
+        {
+            await DisplayAlert("TOTP", "Enter at least an issuer or an account name so entries can be told apart.", "OK");
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(secret))
         {
             await DisplayAlert("TOTP", "Secret is required.", "OK");

@@ -67,6 +67,13 @@
                 <Button Text="Start Bluetooth" Clicked="OnStartBluetoothClicked" />
                 <Button Text="Send PQ Key Bundle" Clicked="OnSendPqKeyBundleClicked" />
             </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Send TOTP from clipboard" Clicked="OnSendTotpFromClipboardClicked" />
+                <Label Text="Accepts an otpauth:// URI or a bare Base32 secret. Secret is never shown; clipboard is cleared after sending."
+                       FontSize="12"
+                       TextColor="Gray"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
             <Label
                 Text="Current SMS content"
                 FontAttributes="Bold" />

@@ -8,22 +8,26 @@
             <Label Text="Codes are hidden. Use Copy or Send — never displayed."
                    FontSize="12"
                    TextColor="Gray" />
-            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
-                <Button Grid.Column="0"
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                <Button Grid.Row="0" Grid.Column="0"
                         x:Name="ScanQrButton"
                         Text="Scan QR"
                         Clicked="OnScanQrClicked" />
-                <Button Grid.Column="1"
+                <Button Grid.Row="0" Grid.Column="1"
                         x:Name="ManualEntryButton"
                         Text="Manual"
                         Clicked="OnManualEntryClicked" />
-                <Button Grid.Column="2"
+                <Button Grid.Row="1" Grid.Column="0"
+                        x:Name="ImportFromDesktopButton"
+                        Text="From Desktop"
+                        Clicked="OnImportFromDesktopClicked" />
+                <Button Grid.Row="1" Grid.Column="1"
                         x:Name="RefreshButton"
                         Text="Refresh"
                         Clicked="OnRefreshClicked" />
             </Grid>
             <Label x:Name="EmptyLabel"
-                   Text="No TOTP accounts yet. Scan a QR code to add one."
+                   Text="No TOTP accounts yet. Scan a QR code, enter manually, or import from Desktop."
                    FontSize="13"
                    TextColor="Gray"
                    IsVisible="False" />
@@ -36,9 +40,12 @@
                 <DataTemplate>
                     <Frame Margin="12,6" Padding="12" BorderColor="LightGray">
                         <VerticalStackLayout Spacing="6">
-                            <Label Text="{Binding DisplayName}"
+                            <Label Text="{Binding Title}"
                                    FontAttributes="Bold"
                                    FontSize="16" />
+                            <Label Text="{Binding Subtitle}"
+                                   FontSize="13"
+                                   IsVisible="{Binding HasSubtitle}" />
                             <Label Text="{Binding Meta}"
                                    FontSize="12"
                                    TextColor="Gray" />

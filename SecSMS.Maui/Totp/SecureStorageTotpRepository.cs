@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using SecSMS.Common.Totp;
 
@@ -58,10 +59,18 @@ public sealed class SecureStorageTotpRepository : ITotpRepository
             entry.Id = Guid.NewGuid().ToString("N");
         }
 
-        // Replace same-id entry, else append (prevents duplicates on re-scan).
+        // Replace an entry with the same Id (rename), or the same secret
+        // (re-scanning/re-importing mints a new Id each time, so the secret is
+        // the dedupe key). Id match wins; keep the stored Id so references stay stable.
+        var normalizedSecret = NormalizeSecret(entry.SecretBase32);
         var existing = list.FindIndex(e => string.Equals(e.Id, entry.Id, StringComparison.Ordinal));
+        if (existing < 0)
+        {
+            existing = list.FindIndex(e => string.Equals(NormalizeSecret(e.SecretBase32), normalizedSecret, StringComparison.Ordinal));
+        }
         if (existing >= 0)
         {
+            entry.Id = list[existing].Id;
             list[existing] = entry;
         }
         else
@@ -86,6 +95,22 @@ public sealed class SecureStorageTotpRepository : ITotpRepository
         {
             await SaveAsync(list).ConfigureAwait(false);
         }
+    }
+
+    static string NormalizeSecret(string secret)
+    {
+        var sb = new StringBuilder(secret.Length);
+        foreach (var ch in secret)
+        {
+            if (char.IsWhiteSpace(ch) || ch == '-' || ch == '=')
+            {
+                continue;
+            }
+
+            sb.Append(char.ToUpperInvariant(ch));
+        }
+
+        return sb.ToString();
     }
 
     static Task SaveAsync(List<TotpEntry> list)

@@ -38,6 +38,11 @@ public partial class TotpListPage : ContentPage
             _rows.Clear();
             foreach (var entry in entries.OrderBy(e => e.DisplayName))
             {
+                if (string.IsNullOrWhiteSpace(entry.Id))
+                {
+                    entry.Id = Guid.NewGuid().ToString("N");
+                }
+
                 _entriesById[entry.Id] = entry;
                 _rows.Add(new TotpRow(entry));
             }
@@ -109,6 +114,97 @@ public partial class TotpListPage : ContentPage
     async void OnRefreshClicked(object? sender, EventArgs e)
     {
         await LoadAsync();
+    }
+
+    async void OnImportFromDesktopClicked(object? sender, EventArgs e)
+    {
+        if (sender is not Button button)
+        {
+            return;
+        }
+
+        string? payload;
+        try
+        {
+            button.IsEnabled = false;
+            // Decrypted in-memory only; never assigned to a Label or logged.
+            payload = await _otpTransferService.ReceiveTotpEnrollmentAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            await DisplayAlert("TOTP", "Import was cancelled.", "OK");
+            return;
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("TOTP", "Import failed: " + ex.Message, "OK");
+            return;
+        }
+        finally
+        {
+            button.IsEnabled = true;
+        }
+
+        TotpEntry? entry;
+        if (payload.StartsWith("otpauth://", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!OtpauthParser.TryParse(payload, out entry, out var error) || entry == null)
+            {
+                await DisplayAlert("TOTP", error ?? "Received data is not a valid TOTP enrollment.", "OK");
+                return;
+            }
+        }
+        else
+        {
+            // Sites that copy only the secret: bare Base32 with default parameters.
+            var secret = payload.Trim();
+            try
+            {
+                _ = TotpGenerator.Generate(secret, DateTimeOffset.UtcNow);
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("TOTP", "Received data is not a valid Base32 secret: " + ex.Message, "OK");
+                return;
+            }
+
+            entry = new TotpEntry(Guid.NewGuid().ToString("N"), string.Empty, string.Empty, secret, TotpAlgorithm.Sha1, 6, 30);
+        }
+
+        if (string.IsNullOrWhiteSpace(entry.Issuer) && string.IsNullOrWhiteSpace(entry.AccountName))
+        {
+            var issuer = await DisplayPromptAsync("Name account", "Issuer (e.g. GitHub)", "OK", "Cancel", "Issuer", -1, Keyboard.Text, string.Empty);
+            if (issuer == null)
+            {
+                return;
+            }
+
+            var account = await DisplayPromptAsync("Name account", "Account (e.g. user@example.com)", "OK", "Cancel", "Account", -1, Keyboard.Text, string.Empty);
+            if (account == null)
+            {
+                return;
+            }
+
+            entry.Issuer = issuer.Trim();
+            entry.AccountName = account.Trim();
+            if (string.IsNullOrWhiteSpace(entry.Issuer) && string.IsNullOrWhiteSpace(entry.AccountName))
+            {
+                await DisplayAlert("TOTP", "Enter at least an issuer or an account name.", "OK");
+                return;
+            }
+        }
+
+        try
+        {
+            // Upserts by Id or secret: re-importing the same account updates it.
+            await _totpRepository.AddAsync(entry);
+            await LoadAsync();
+            await DisplayAlert("TOTP", $"Added '{entry.DisplayName}'.", "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("TOTP", "Could not save account: " + ex.Message, "OK");
+        }
     }
 
     async void OnCopyClicked(object? sender, EventArgs e)
@@ -237,8 +333,15 @@ public partial class TotpListPage : ContentPage
             return;
         }
 
-        await _totpRepository.DeleteAsync(entry.Id);
-        await LoadAsync();
+        try
+        {
+            await _totpRepository.DeleteAsync(entry.Id);
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("TOTP", "Delete failed: " + ex.Message, "OK");
+        }
     }
 
     sealed class TotpRow : INotifyPropertyChanged
@@ -257,7 +360,31 @@ public partial class TotpListPage : ContentPage
 
         public string Id => _entry.Id;
 
-        public string DisplayName => string.IsNullOrWhiteSpace(_entry.DisplayName) ? "(unnamed)" : _entry.DisplayName;
+        public string Title
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(_entry.Issuer))
+                {
+                    return _entry.Issuer;
+                }
+
+                if (!string.IsNullOrWhiteSpace(_entry.AccountName))
+                {
+                    return _entry.AccountName;
+                }
+
+                var tag = _entry.Id.Length > 6 ? _entry.Id.Substring(0, 6) : _entry.Id;
+                return string.IsNullOrEmpty(tag) ? "(unnamed account)" : $"Unnamed account ({tag})";
+            }
+        }
+
+        public string Subtitle =>
+            !string.IsNullOrWhiteSpace(_entry.Issuer) && !string.IsNullOrWhiteSpace(_entry.AccountName)
+                ? _entry.AccountName
+                : string.Empty;
+
+        public bool HasSubtitle => Subtitle.Length > 0;
 
         public string Meta => $"{_entry.Algorithm.ToString().ToUpperInvariant()} · {_entry.Digits} digits · every {_entry.Period}s";
 

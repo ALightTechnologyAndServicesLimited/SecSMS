@@ -10,4 +10,9 @@ public sealed class UnsupportedOtpTransferService : IOtpTransferService
     {
         throw new PlatformNotSupportedException("OTP transfer is only available on Android.");
     }
+
+    public Task<string> ReceiveTotpEnrollmentAsync(CancellationToken cancellationToken = default)
+    {
+        throw new PlatformNotSupportedException("TOTP import is only available on Android.");
+    }
 }
